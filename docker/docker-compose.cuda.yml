@@ -1,0 +1,40 @@
+services:
+  sim:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        USERNAME: ${USERNAME:?run scripts/host_setup.sh first}
+        USER_UID: ${USER_UID:?run scripts/host_setup.sh first}
+        USER_GID: ${USER_GID:?run scripts/host_setup.sh first}
+        TORCH_INDEX_URL: https://download.pytorch.org/whl/cu130
+
+    image: genesis-ros2:cuda-${USERNAME}
+    container_name: genesis-ros2-${USERNAME}
+
+    network_mode: host
+    ipc: host
+    
+    working_dir: /home/${USERNAME}/genesis_ws
+
+    volumes:
+      - ../:/home/${USERNAME}/genesis_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - QT_X11_NO_MITSHM=1
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    stdin_open: true
+    tty: true
+    command: bash
