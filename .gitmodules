@@ -1,0 +1,3 @@
+[submodule "src/genesis_ros"]
+	path = src/genesis_ros
+	url = https://github.com/vybhav-ibr/genesis_ros
