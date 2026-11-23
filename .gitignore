@@ -1,0 +1,5 @@
+.env
+.vscode/
+build/
+install/
+log/
